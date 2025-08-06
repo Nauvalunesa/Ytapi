@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - YouTube Downloader API</title>
+    <script src="https://app.midtrans.com/snap/snap.js" data-client-key="Mid-client-sduT_6RoVKBbuXtJ"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .dashboard-tabs {
+            display: flex;
+            background: white;
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 0;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .tab-btn:not(.active):hover {
+            background: #f8f9fa;
+        }
+        
+        .tab-content {
+            background: white;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 2rem;
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .info-value {
+            color: #333;
+        }
+        
+        .role-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .role-free {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .role-premium {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.2s;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .api-key-item, .ip-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+            word-break: break-all;
+        }
+        
+        .api-key-item small, .ip-item small {
+            color: #666;
+            display: block;
+            margin-top: 0.5rem;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .alert.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .role-packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .role-package {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 1.5rem;
+            background: white;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .role-package:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .role-package.selected {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .price-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .price-option {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .price-option:hover {
+            background: #e9ecef;
+        }
+        
+        .price-option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header .container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .dashboard-tabs {
+                flex-direction: column;
+            }
+            
+            .tab-btn {
+                border-radius: 0;
+            }
+            
+            .tab-btn:first-child {
+                border-radius: 10px 10px 0 0;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1><i class="fas fa-tachometer-alt"></i> Dashboard API</h1>
+            <div class="user-info">
+                <span id="welcomeText">Selamat datang!</span>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="alert" class="alert"></div>
+        
+        <!-- Dashboard Tabs -->
+        <div class="dashboard-tabs">
+            <button class="tab-btn active" onclick="showTab('overview')">
+                <i class="fas fa-home"></i> Overview
+            </button>
+            <button class="tab-btn" onclick="showTab('roles')">
+                <i class="fas fa-crown"></i> Beli Role
+            </button>
+            <button class="tab-btn" onclick="showTab('settings')">
+                <i class="fas fa-cog"></i> Settings
+            </button>
+            <button class="tab-btn" id="adminTab" onclick="showTab('admin')" style="display: none;">
+                <i class="fas fa-user-shield"></i> Admin
+            </button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="dashboard-grid">
+                <!-- User Info Card -->
+                <div class="card">
+                    <h2><i class="fas fa-user"></i> Informasi Akun</h2>
+                    <div class="info-item">
+                        <span class="info-label">Username:</span>
+                        <span class="info-value" id="username">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value" id="email">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Nomor WA:</span>
+                        <span class="info-value" id="phone">-</span>
+                    </div>
+                </div>
+
+                <!-- Role Info Card -->
+                <div class="card">
+                    <h2><i class="fas fa-crown"></i> Informasi Role</h2>
+                    <div class="info-item">
+                        <span class="info-label">Role Saat Ini:</span>
+                        <span class="info-value">
+                            <span id="currentRole" class="role-badge role-free">-</span>
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Kadaluarsa:</span>
+                        <span class="info-value" id="roleExpired">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Resolusi Max:</span>
+                        <span class="info-value" id="maxResolution">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Ukuran Max:</span>
+                        <span class="info-value" id="maxSize">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">RPM Limit:</span>
+                        <span class="info-value" id="rpmLimit">-</span>
+                    </div>
+                </div>
+
+                <!-- API Keys Card -->
+                <div class="card">
+                    <h2><i class="fas fa-key"></i> API Keys</h2>
+                    <div id="apiKeysList">
+                        <p>Memuat...</p>
+                    </div>
+                    <button class="btn" onclick="generateApiKey()">
+                        <i class="fas fa-plus"></i> Generate API Key Baru
+                    </button>
+                </div>
+
+                <!-- IP Addresses Card -->
+                <div class="card">
+                    <h2><i class="fas fa-network-wired"></i> IP Addresses Terdaftar</h2>
+                    <div id="ipsList">
+                        <p>Memuat...</p>
+                    </div>
+                    <button class="btn" onclick="showAddIpModal()">
+                        <i class="fas fa-plus"></i> Tambah IP Address
+                    </button>
+                </div>
+            </div>
+
+            <!-- API Usage Guide -->
+            <div class="card">
+                <h2><i class="fas fa-book"></i> Panduan Penggunaan API</h2>
+                <h3>1. Menggunakan Bearer Token</h3>
+                <pre><code>curl -H "Authorization: Bearer YOUR_TOKEN" https://api.example.com/search/?query=test</code></pre>
+                
+                <h3>2. Menggunakan API Key</h3>
+                <pre><code>curl -H "X-API-Key: YOUR_API_KEY" https://api.example.com/search/?query=test</code></pre>
+                
+                <h3>3. Menggunakan IP Address (jika terdaftar)</h3>
+                <pre><code>curl https://api.example.com/search/?query=test</code></pre>
+                
+                <p><strong>Endpoint Utama:</strong></p>
+                <ul>
+                    <li><code>/search/</code> - Pencarian video YouTube</li>
+                    <li><code>/download/</code> - Download video YouTube</li>
+                    <li><code>/download/audio</code> - Download audio YouTube</li>
+                    <li><code>/spotify/search</code> - Pencarian Spotify</li>
+                    <li><code>/spotify/download/audio</code> - Download audio Spotify</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Roles Tab -->
+        <div id="roles" class="tab-content">
+            <h2><i class="fas fa-shopping-cart"></i> Beli Role Premium</h2>
+            <p style="margin-bottom: 2rem; color: #666;">Upgrade ke role premium untuk mendapatkan akses unlimited dan fitur eksklusif</p>
+            
+            <!-- Role Packages Grid -->
+            <div id="rolePackagesGrid" class="role-packages-grid">
+                <p>Memuat paket role...</p>
+            </div>
+            
+            <!-- Purchase Form -->
+            <div id="purchaseFormSection" style="background: #f8f9fa; padding: 2rem; border-radius: 10px; margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1.5rem; color: #333;"><i class="fas fa-credit-card"></i> Form Pembelian</h3>
+                
+                <div id="purchaseAlert"></div>
+                
+                <form id="rolePurchaseForm">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="selectedRole">Role Dipilih:</label>
+                            <input type="text" id="selectedRole" readonly style="background: #e9ecef;">
+                        </div>
+                        <div class="form-group">
+                            <label for="selectedPrice">Harga:</label>
+                            <input type="text" id="selectedPrice" readonly style="background: #e9ecef;">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="couponCode">Kode Kupon (Opsional):</label>
+                        <input type="text" id="couponCode" placeholder="Masukkan kode kupon untuk diskon">
+                    </div>
+                    
+                    <button type="submit" class="btn" id="purchaseBtn" disabled>
+                        <i class="fas fa-shopping-cart"></i> Beli Role
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Payment Status -->
+            <div id="paymentStatusSection" style="display: none; background: #e3f2fd; padding: 2rem; border-radius: 10px; border: 2px solid #2196f3;">
+                <h3 style="color: #1976d2; margin-bottom: 1rem;"><i class="fas fa-receipt"></i> Status Pembayaran</h3>
+                <div id="paymentDetails"></div>
+                <div id="paymentAlert" style="margin: 1rem 0;"></div>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button id="checkPaymentStatus" class="btn btn-secondary">
+                        <i class="fas fa-sync-alt"></i> Cek Status
+                    </button>
+                    <button id="newPurchase" class="btn">
+                        <i class="fas fa-plus"></i> Pembelian Baru
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h2><i class="fas fa-user-edit"></i> Pengaturan Akun</h2>
+                    <p>Fitur pengaturan akun akan segera tersedia.</p>
+                </div>
+                
+                <div class="card">
+                    <h2><i class="fas fa-shield-alt"></i> Keamanan</h2>
+                    <p>Pengaturan keamanan dan privasi.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Tab -->
+        <div id="admin" class="tab-content">
+            <div class="card">
+                <h2><i class="fas fa-user-shield"></i> Admin Panel</h2>
+                <div style="margin-bottom: 2rem;">
+                    <button class="btn" onclick="loadAllUsers()">
+                        <i class="fas fa-users"></i> Lihat Semua User
+                    </button>
+                    <button class="btn btn-success" onclick="showGiveRoleModal()">
+                        <i class="fas fa-gift"></i> Berikan Role
+                    </button>
+                    <button class="btn btn-warning" onclick="showChangeUserIpForm()">
+                        <i class="fas fa-network-wired"></i> Ubah IP User
+                    </button>
+                </div>
+                
+                <!-- User List -->
+                <div id="usersList" style="display: none;">
+                    <h3>Daftar User</h3>
+                    <div id="usersTable"></div>
+                </div>
+                
+                <!-- Change User IP Form -->
+                <div id="changeUserIpForm" style="display: none;">
+                    <h3>Ubah IP User</h3>
+                    <form id="adminChangeIpForm">
+                        <div class="form-group">
+                            <label for="adminIpUsername">Username:</label>
+                            <input type="text" id="adminIpUsername" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminIpLama">IP Lama (opsional):</label>
+                            <input type="text" id="adminIpLama" name="ip_lama" placeholder="192.168.1.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminIpBaru">IP Baru:</label>
+                            <input type="text" id="adminIpBaru" name="ip_baru" required placeholder="192.168.1.2">
+                        </div>
+                        <button type="submit" class="btn">
+                            <i class="fas fa-save"></i> Ubah IP
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="hideChangeUserIpForm()">
+                            <i class="fas fa-times"></i> Batal
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add IP Modal -->
+    <div id="addIpModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddIpModal()">&times;</span>
+            <h2><i class="fas fa-plus"></i> Tambah IP Address</h2>
+            <form id="addIpForm">
+                <div class="form-group">
+                    <label for="ipAddress">IP Address:</label>
+                    <input type="text" id="ipAddress" name="ip_address" placeholder="192.168.1.1" required>
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-plus"></i> Tambah IP
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="closeAddIpModal()">
+                    <i class="fas fa-times"></i> Batal
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Give Role Modal -->
+    <div id="giveRoleModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeGiveRoleModal()">&times;</span>
+            <h2><i class="fas fa-gift"></i> Berikan Role ke User</h2>
+            <form id="giveRoleForm">
+                <div class="form-group">
+                    <label for="giveRoleUsername">Username Target:</label>
+                    <input type="text" id="giveRoleUsername" name="target_username" required>
+                </div>
+                <div class="form-group">
+                    <label for="giveRoleSelect">Role:</label>
+                    <select id="giveRoleSelect" name="role_name" required>
+                        <option value="">Pilih Role</option>
+                        <option value="pencariawal">Pencari Awal</option>
+                        <option value="penjelajahmuda">Penjelajah Muda</option>
+                        <option value="masterpro">Master Pro</option>
+                        <option value="strategiselit">Strategi Elit</option>
+                        <option value="visionerlegendaris">Visioner Legendaris</option>
+                        <option value="penguasa">Penguasa</option>
+                        <option value="liburanpackages">Liburan Spesial</option>
+                        <option value="dirgahayuri">Dirgahayu RI</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="giveRoleDays">Jumlah Hari:</label>
+                    <input type="number" id="giveRoleDays" name="days" min="1" max="9999" required>
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-gift"></i> Berikan Role
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="closeGiveRoleModal()">
+                    <i class="fas fa-times"></i> Batal
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is logged in
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            window.location.href = '/login';
+        }
+
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab button
+            event.target.classList.add('active');
+            
+            // Load specific content based on tab
+            if (tabName === 'roles') {
+                loadRolePackages();
+            } else if (tabName === 'admin') {
+                // Admin tab specific loading if needed
+            }
+        }
+
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/user/dashboard', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    updateDashboard(data);
+                } else if (response.status === 401) {
+                    localStorage.removeItem('access_token');
+                    window.location.href = '/login';
+                } else {
+                    showAlert('error', 'Gagal memuat data dashboard');
+                }
+            } catch (error) {
+                showAlert('error', 'Terjadi kesalahan jaringan');
+            }
+        }
+
+        function updateDashboard(data) {
+            // Update user info
+            document.getElementById('username').textContent = data.user_info.username;
+            document.getElementById('email').textContent = data.user_info.email;
+            document.getElementById('phone').textContent = data.user_info.phone_number;
+            document.getElementById('welcomeText').textContent = `Selamat datang, ${data.user_info.username}!`;
+
+            // Show admin tab if user is admin
+            if (data.user_info.username === 'admin') {
+                document.getElementById('adminTab').style.display = 'block';
+            }
+
+            // Update role info
+            const roleElement = document.getElementById('currentRole');
+            roleElement.textContent = data.role_info.current_role;
+            roleElement.className = `role-badge ${data.role_info.current_role === 'petualang_gratis' ? 'role-free' : 'role-premium'}`;
+            
+            document.getElementById('roleExpired').textContent = data.role_info.expired_at || 'Tidak terbatas';
+            document.getElementById('maxResolution').textContent = data.role_info.limits.resolution + 'p';
+            document.getElementById('maxSize').textContent = data.role_info.limits.max_size_mb + ' MB';
+            document.getElementById('rpmLimit').textContent = data.role_info.limits.rpm + '/menit';
+
+            // Update API keys
+            const apiKeysList = document.getElementById('apiKeysList');
+            if (data.api_keys.length === 0) {
+                apiKeysList.innerHTML = '<p>Belum ada API key</p>';
+            } else {
+                apiKeysList.innerHTML = data.api_keys.map(key => `
+                    <div class="api-key-item">
+                        <strong>${key.api_key}</strong>
+                        <small>Dibuat: ${new Date(key.created_at).toLocaleString('id-ID')}</small>
+                    </div>
+                `).join('');
+            }
+
+            // Update IP addresses
+            const ipsList = document.getElementById('ipsList');
+            if (data.registered_ips.length === 0) {
+                ipsList.innerHTML = '<p>Belum ada IP terdaftar</p>';
+            } else {
+                ipsList.innerHTML = data.registered_ips.map(ip => `
+                    <div class="ip-item">
+                        <strong>${ip.ip_address}</strong>
+                        <small>Ditambahkan: ${new Date(ip.created_at).toLocaleString('id-ID')}</small>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Role Purchase System
+        let allRolesData = {};
+        let selectedRoleData = null;
+        let currentPaymentId = '';
+        let paymentCheckInterval = null;
+
+        // Role details mapping
+        const roleDetailsMap = {
+            'pencariawal': { name: 'Pencari Awal', icon: 'compass', color: '#28a745' },
+            'penjelajahmuda': { name: 'Penjelajah Muda', icon: 'map', color: '#17a2b8' },
+            'masterpro': { name: 'Master Pro', icon: 'crown', color: '#ffc107' },
+            'strategiselit': { name: 'Strategis Elit', icon: 'chess-knight', color: '#fd7e14' },
+            'visionerlegendaris': { name: 'Visioner Legendaris', icon: 'gem', color: '#6f42c1' },
+            'penguasa': { name: 'Penguasa Tertinggi', icon: 'chess-king', color: '#dc3545' },
+            'liburanpackages': { name: 'Liburan Spesial', icon: 'umbrella-beach', color: '#20c997' },
+            'dirgahayuri': { name: 'Dirgahayu RI', icon: 'flag', color: '#e83e8c' }
+        };
+
+        // Load role packages
+        async function loadRolePackages() {
+            try {
+                const response = await fetch('/topup/roles');
+                if (response.ok) {
+                    allRolesData = await response.json();
+                    renderRolePackages();
+                } else {
+                    document.getElementById('rolePackagesGrid').innerHTML = '<p style="color: #dc3545;">Gagal memuat paket role</p>';
+                }
+            } catch (error) {
+                document.getElementById('rolePackagesGrid').innerHTML = '<p style="color: #dc3545;">Terjadi kesalahan saat memuat paket</p>';
+            }
+        }
+
+        // Render role packages
+        function renderRolePackages() {
+            const grid = document.getElementById('rolePackagesGrid');
+            let html = '';
+            
+            Object.keys(allRolesData).forEach(roleKey => {
+                const packages = allRolesData[roleKey];
+                const roleInfo = roleDetailsMap[roleKey] || { name: roleKey, icon: 'star', color: '#6c757d' };
+                
+                html += `
+                    <div class="role-package" data-role="${roleKey}" style="border-color: ${roleInfo.color};">
+                        <h4 style="color: ${roleInfo.color}; margin-bottom: 1rem; display: flex; align-items: center;">
+                            <i class="fas fa-${roleInfo.icon}" style="margin-right: 0.5rem;"></i>
+                            ${roleInfo.name}
+                        </h4>
+                        <div class="package-features" style="margin-bottom: 1rem; font-size: 0.9rem; color: #666;">
+                            <div><i class="fas fa-tv"></i> Resolusi: ${packages[0].limit.resolution}p</div>
+                            <div><i class="fas fa-hdd"></i> Max Size: ${packages[0].limit.max_size_mb}MB</div>
+                            <div><i class="fas fa-tachometer-alt"></i> RPM: ${packages[0].limit.rpm === 99999 ? 'Unlimited' : packages[0].limit.rpm}</div>
+                        </div>
+                        <div class="price-options">
+                            ${packages.map(pkg => `
+                                <button class="price-option" 
+                                        data-role="${pkg.role}" 
+                                        data-price="${pkg.price}" 
+                                        data-days="${pkg.days}"
+                                        data-role-name="${roleInfo.name}"
+                                        style="background-color: ${roleInfo.color}; color: white;">
+                                    ${pkg.days} hari - Rp${pkg.price.toLocaleString('id-ID')}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            grid.innerHTML = html;
+            
+            // Add click handlers for price options
+            document.querySelectorAll('.price-option').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    
+                    // Remove previous selections
+                    document.querySelectorAll('.price-option').forEach(b => b.classList.remove('selected'));
+                    document.querySelectorAll('.role-package').forEach(p => p.classList.remove('selected'));
+                    
+                    // Add selection
+                    this.classList.add('selected');
+                    this.closest('.role-package').classList.add('selected');
+                    
+                    // Update form
+                    selectedRoleData = {
+                        role: this.dataset.role,
+                        price: parseInt(this.dataset.price),
+                        days: parseInt(this.dataset.days),
+                        roleName: this.dataset.roleName
+                    };
+                    
+                    document.getElementById('selectedRole').value = `${selectedRoleData.roleName} (${selectedRoleData.days} hari)`;
+                    document.getElementById('selectedPrice').value = `Rp${selectedRoleData.price.toLocaleString('id-ID')}`;
+                    document.getElementById('purchaseBtn').disabled = false;
+                    
+                    // Scroll to form
+                    document.getElementById('purchaseFormSection').scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+        }
+
+        // Handle purchase form submission
+        document.getElementById('rolePurchaseForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!selectedRoleData) {
+                showPurchaseAlert('Pilih paket role terlebih dahulu', 'error');
+                return;
+            }
+            
+            const purchaseBtn = document.getElementById('purchaseBtn');
+            
+            purchaseBtn.innerHTML = '<span class="loading"></span> Memproses...';
+            purchaseBtn.disabled = true;
+            
+            try {
+                const formData = new FormData();
+                formData.append('role', selectedRoleData.role);
+                
+                const response = await fetch('/user/topup/create-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    currentPaymentId = result.idpay;
+                    
+                    // Show payment status section
+                    document.getElementById('paymentStatusSection').style.display = 'block';
+                    updatePaymentDetails(result);
+                    
+                    // Use Midtrans Snap if available
+                    if (window.snap && result.token) {
+                        window.snap.pay(result.token, {
+                            onSuccess: function(result) {
+                                showPurchaseAlert('Pembayaran berhasil! Role akan segera diaktifkan.', 'success');
+                                startPaymentChecking();
+                            },
+                            onPending: function(result) {
+                                showPurchaseAlert('Pembayaran pending. Silakan selesaikan pembayaran.', 'warning');
+                                startPaymentChecking();
+                            },
+                            onError: function(result) {
+                                showPurchaseAlert('Pembayaran gagal: ' + (result.status_message || 'Terjadi kesalahan'), 'error');
+                            },
+                            onClose: function() {
+                                showPurchaseAlert('Pembayaran dibatalkan. Anda dapat melanjutkan kapan saja.', 'info');
+                                startPaymentChecking();
+                            }
+                        });
+                    } else {
+                        if (result.redirect_url) {
+                            window.open(result.redirect_url, '_blank');
+                        }
+                        startPaymentChecking();
+                    }
+                    
+                } else {
+                    throw new Error(result.detail || 'Gagal membuat pembayaran');
+                }
+                
+            } catch (error) {
+                showPurchaseAlert('Terjadi kesalahan: ' + error.message, 'error');
+            } finally {
+                purchaseBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Beli Role';
+                purchaseBtn.disabled = false;
+            }
+        });
+
+        // Update payment details display
+        function updatePaymentDetails(paymentData) {
+            const details = document.getElementById('paymentDetails');
+            details.innerHTML = `
+                <div style="background: white; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.9rem;">
+                        <div><strong>ID Pembayaran:</strong><br>${paymentData.idpay}</div>
+                        <div><strong>Role:</strong><br>${selectedRoleData.roleName}</div>
+                        <div><strong>Durasi:</strong><br>${selectedRoleData.days} hari</div>
+                        <div><strong>Total:</strong><br>Rp${selectedRoleData.price.toLocaleString('id-ID')}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Start payment status checking
+        function startPaymentChecking() {
+            if (paymentCheckInterval) {
+                clearInterval(paymentCheckInterval);
+            }
+            
+            checkPaymentStatus();
+            paymentCheckInterval = setInterval(checkPaymentStatus, 10000);
+        }
+
+        // Check payment status
+        async function checkPaymentStatus() {
+            if (!currentPaymentId) return;
+            
+            try {
+                const response = await fetch(`/topup/check/${currentPaymentId}`);
+                const result = await response.json();
+                
+                if (response.ok && result.status) {
+                    const paymentData = result.data;
+                    
+                    if (paymentData.status === 'paid') {
+                        showPaymentAlert('✅ Pembayaran berhasil! Role telah diaktifkan.', 'success');
+                        clearInterval(paymentCheckInterval);
+                        paymentCheckInterval = null;
+                        
+                        setTimeout(() => {
+                            loadDashboard();
+                        }, 2000);
+                    } else {
+                        showPaymentAlert('⏳ Menunggu pembayaran...', 'info');
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking payment:', error);
+            }
+        }
+
+        // Show purchase alerts
+        function showPurchaseAlert(message, type) {
+            const alertDiv = document.getElementById('purchaseAlert');
+            const alertClass = type === 'success' ? 'alert success' : 
+                             type === 'warning' ? 'alert' : 
+                             type === 'info' ? 'alert' : 'alert error';
+            
+            alertDiv.innerHTML = `<div class="${alertClass}" style="margin-bottom: 1rem;">${message}</div>`;
+            
+            setTimeout(() => {
+                alertDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        // Show payment alerts
+        function showPaymentAlert(message, type) {
+            const alertDiv = document.getElementById('paymentAlert');
+            const colors = {
+                success: '#28a745',
+                error: '#dc3545',
+                warning: '#ffc107',
+                info: '#17a2b8'
+            };
+            
+            alertDiv.innerHTML = `
+                <div style="padding: 1rem; border-radius: 8px; background: ${colors[type]}20; border: 1px solid ${colors[type]}; color: ${colors[type]};">
+                    ${message}
+                </div>
+            `;
+        }
+
+        // Manual payment status check
+        document.getElementById('checkPaymentStatus').addEventListener('click', function() {
+            this.innerHTML = '<span class="loading"></span> Memeriksa...';
+            this.disabled = true;
+            
+            checkPaymentStatus().finally(() => {
+                this.innerHTML = '<i class="fas fa-sync-alt"></i> Cek Status';
+                this.disabled = false;
+            });
+        });
+
+        // New purchase button
+        document.getElementById('newPurchase').addEventListener('click', function() {
+            selectedRoleData = null;
+            currentPaymentId = '';
+            document.getElementById('selectedRole').value = '';
+            document.getElementById('selectedPrice').value = '';
+            document.getElementById('couponCode').value = '';
+            document.getElementById('purchaseBtn').disabled = true;
+            
+            document.getElementById('paymentStatusSection').style.display = 'none';
+            
+            if (paymentCheckInterval) {
+                clearInterval(paymentCheckInterval);
+                paymentCheckInterval = null;
+            }
+            
+            document.querySelectorAll('.price-option').forEach(b => b.classList.remove('selected'));
+            document.querySelectorAll('.role-package').forEach(p => p.classList.remove('selected'));
+            
+            document.getElementById('purchaseAlert').innerHTML = '';
+            document.getElementById('paymentAlert').innerHTML = '';
+            
+            document.getElementById('rolePackagesGrid').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // API Key and IP management functions
+        async function generateApiKey() {
+            try {
+                const response = await fetch('/user/generate-api-key', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('success', result.message);
+                    loadDashboard();
+                } else {
+                    showAlert('error', result.detail || 'Gagal generate API key');
+                }
+            } catch (error) {
+                showAlert('error', 'Terjadi kesalahan jaringan');
+            }
+        }
+
+        function showAddIpModal() {
+            document.getElementById('addIpModal').style.display = 'block';
+        }
+
+        function closeAddIpModal() {
+            document.getElementById('addIpModal').style.display = 'none';
+            document.getElementById('addIpForm').reset();
+        }
+
+        document.getElementById('addIpForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('ip_address', document.getElementById('ipAddress').value);
+
+            try {
+                const response = await fetch('/user/add-ip', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('success', result.message);
+                    closeAddIpModal();
+                    loadDashboard();
+                } else {
+                    showAlert('error', result.detail || 'Gagal menambah IP');
+                }
+            } catch (error) {
+                showAlert('error', 'Terjadi kesalahan jaringan');
+            }
+        });
+
+        // Admin functions
+        async function loadAllUsers() {
+            try {
+                const response = await fetch('/admin/users', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const usersTable = document.getElementById('usersTable');
+                    
+                    let html = `
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                            <thead>
+                                <tr style="background: #f8f9fa;">
+                                    <th style="padding: 0.5rem; border: 1px solid #ddd;">Username</th>
+                                    <th style="padding: 0.5rem; border: 1px solid #ddd;">Email</th>
+                                    <th style="padding: 0.5rem; border: 1px solid #ddd;">Role</th>
+                                    <th style="padding: 0.5rem; border: 1px solid #ddd;">Expired</th>
+                                    <th style="padding: 0.5rem; border: 1px solid #ddd;">API Keys</th>
+                                    <th style="padding: 0.5rem; border: 1px solid #ddd;">IPs</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    
+                    data.users.forEach(user => {
+                        html += `
+                            <tr>
+                                <td style="padding: 0.5rem; border: 1px solid #ddd;">${user.username}</td>
+                                <td style="padding: 0.5rem; border: 1px solid #ddd;">${user.email}</td>
+                                <td style="padding: 0.5rem; border: 1px solid #ddd;">${user.current_role}</td>
+                                <td style="padding: 0.5rem; border: 1px solid #ddd;">${user.role_expired || 'Unlimited'}</td>
+                                <td style="padding: 0.5rem; border: 1px solid #ddd;">${user.api_keys_count}</td>
+                                <td style="padding: 0.5rem; border: 1px solid #ddd;">${user.ip_addresses_count}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    html += '</tbody></table>';
+                    usersTable.innerHTML = html;
+                    document.getElementById('usersList').style.display = 'block';
+                } else if (response.status === 403) {
+                    showAlert('error', 'Akses ditolak. Anda bukan admin.');
+                } else {
+                    showAlert('error', 'Gagal memuat data user');
+                }
+            } catch (error) {
+                showAlert('error', 'Terjadi kesalahan jaringan');
+            }
+        }
+
+        function showGiveRoleModal() {
+            document.getElementById('giveRoleModal').style.display = 'block';
+        }
+
+        function closeGiveRoleModal() {
+            document.getElementById('giveRoleModal').style.display = 'none';
+            document.getElementById('giveRoleForm').reset();
+        }
+
+        document.getElementById('giveRoleForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch('/admin/give-role', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('success', result.message);
+                    closeGiveRoleModal();
+                } else {
+                    showAlert('error', result.detail || 'Gagal memberikan role');
+                }
+            } catch (error) {
+                showAlert('error', 'Terjadi kesalahan jaringan');
+            }
+        });
+
+        function showChangeUserIpForm() {
+            document.getElementById('changeUserIpForm').style.display = 'block';
+            document.getElementById('usersList').style.display = 'none';
+        }
+
+        function hideChangeUserIpForm() {
+            document.getElementById('changeUserIpForm').style.display = 'none';
+            document.getElementById('adminChangeIpForm').reset();
+        }
+
+        document.getElementById('adminChangeIpForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const params = new URLSearchParams();
+            
+            for (let [key, value] of formData.entries()) {
+                if (value) params.append(key, value);
+            }
+
+            try {
+                const response = await fetch('/topup/change-ip?' + params.toString(), {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('success', result.message);
+                    hideChangeUserIpForm();
+                } else {
+                    showAlert('error', result.error || 'Gagal mengubah IP');
+                }
+            } catch (error) {
+                showAlert('error', 'Terjadi kesalahan jaringan');
+            }
+        });
+
+        function showAlert(type, message) {
+            const alert = document.getElementById('alert');
+            alert.className = `alert ${type}`;
+            alert.textContent = message;
+            alert.style.display = 'block';
+
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        function logout() {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('user_data');
+            window.location.href = '/login';
+        }
+
+        // Load dashboard on page load
+        loadDashboard();
+    </script>
+</body>
+</html>

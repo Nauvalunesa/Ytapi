@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - YouTube Downloader API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-semibold">Dashboard</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="username" class="text-gray-700"></span>
+                    <button onclick="logout()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- User Info Card -->
+        <div class="bg-white overflow-hidden shadow rounded-lg mb-6">
+            <div class="px-4 py-5 sm:p-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Informasi Akun</h3>
+                <div class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Username</dt>
+                        <dd id="user-username" class="mt-1 text-sm text-gray-900"></dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Email</dt>
+                        <dd id="user-email" class="mt-1 text-sm text-gray-900"></dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Role Saat Ini</dt>
+                        <dd id="user-role" class="mt-1 text-sm text-gray-900"></dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Expired</dt>
+                        <dd id="user-expired" class="mt-1 text-sm text-gray-900"></dd>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Role Limits Card -->
+        <div class="bg-white overflow-hidden shadow rounded-lg mb-6">
+            <div class="px-4 py-5 sm:p-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Batasan Role</h3>
+                <div class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Max Resolution</dt>
+                        <dd id="limit-resolution" class="mt-1 text-sm text-gray-900"></dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Max File Size</dt>
+                        <dd id="limit-size" class="mt-1 text-sm text-gray-900"></dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Request Per Minute</dt>
+                        <dd id="limit-rpm" class="mt-1 text-sm text-gray-900"></dd>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Keys Card -->
+        <div class="bg-white overflow-hidden shadow rounded-lg mb-6">
+            <div class="px-4 py-5 sm:p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">API Keys</h3>
+                    <button onclick="generateApiKey()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Generate New API Key
+                    </button>
+                </div>
+                <div id="api-keys-list" class="space-y-2">
+                    <!-- API keys will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- IP Addresses Card -->
+        <div class="bg-white overflow-hidden shadow rounded-lg mb-6">
+            <div class="px-4 py-5 sm:p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Registered IP Addresses</h3>
+                    <button onclick="showAddIpForm()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                        Add IP
+                    </button>
+                </div>
+                <div id="ip-addresses-list" class="space-y-2">
+                    <!-- IP addresses will be loaded here -->
+                </div>
+                
+                <!-- Add IP Form (hidden by default) -->
+                <div id="add-ip-form" class="hidden mt-4">
+                    <div class="flex space-x-2">
+                        <input type="text" id="new-ip" placeholder="192.168.1.1" 
+                               class="flex-1 px-3 py-2 border border-gray-300 rounded-md">
+                        <button onclick="addIpAddress()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            Add
+                        </button>
+                        <button onclick="hideAddIpForm()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topup Card -->
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Upgrade Role</h3>
+                <p class="mt-1 text-sm text-gray-600">Upgrade role Anda untuk mendapatkan fitur premium</p>
+                <div class="mt-5">
+                    <a href="/topup.html" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+                        Lihat Paket Role
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is logged in
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            window.location.href = '/login.html';
+        }
+
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/user/dashboard', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Update user info
+                    document.getElementById('username').textContent = data.user_info.username;
+                    document.getElementById('user-username').textContent = data.user_info.username;
+                    document.getElementById('user-email').textContent = data.user_info.email;
+                    document.getElementById('user-role').textContent = data.role_info.current_role;
+                    document.getElementById('user-expired').textContent = data.role_info.expired_at || 'Unlimited';
+                    
+                    // Update limits
+                    document.getElementById('limit-resolution').textContent = data.role_info.limits.resolution + 'p';
+                    document.getElementById('limit-size').textContent = data.role_info.limits.max_size_mb + ' MB';
+                    document.getElementById('limit-rpm').textContent = data.role_info.limits.rpm;
+                    
+                    // Update API keys
+                    const apiKeysList = document.getElementById('api-keys-list');
+                    apiKeysList.innerHTML = '';
+                    data.api_keys.forEach(key => {
+                        const div = document.createElement('div');
+                        div.className = 'flex justify-between items-center p-3 bg-gray-50 rounded';
+                        div.innerHTML = `
+                            <code class="text-sm">${key.api_key}</code>
+                            <span class="text-xs text-gray-500">${new Date(key.created_at).toLocaleDateString()}</span>
+                        `;
+                        apiKeysList.appendChild(div);
+                    });
+                    
+                    // Update IP addresses
+                    const ipsList = document.getElementById('ip-addresses-list');
+                    ipsList.innerHTML = '';
+                    data.registered_ips.forEach(ip => {
+                        const div = document.createElement('div');
+                        div.className = 'flex justify-between items-center p-3 bg-gray-50 rounded';
+                        div.innerHTML = `
+                            <span class="text-sm">${ip.ip_address}</span>
+                            <span class="text-xs text-gray-500">${new Date(ip.created_at).toLocaleDateString()}</span>
+                        `;
+                        ipsList.appendChild(div);
+                    });
+                } else {
+                    throw new Error('Failed to load dashboard');
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                if (error.message.includes('401')) {
+                    localStorage.removeItem('access_token');
+                    window.location.href = '/login.html';
+                }
+            }
+        }
+
+        async function generateApiKey() {
+            try {
+                const response = await fetch('/user/generate-api-key', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    alert('API Key baru: ' + data.api_key);
+                    loadDashboard(); // Reload to show new key
+                } else {
+                    throw new Error('Failed to generate API key');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function showAddIpForm() {
+            document.getElementById('add-ip-form').classList.remove('hidden');
+        }
+
+        function hideAddIpForm() {
+            document.getElementById('add-ip-form').classList.add('hidden');
+            document.getElementById('new-ip').value = '';
+        }
+
+        async function addIpAddress() {
+            const ip = document.getElementById('new-ip').value;
+            if (!ip) {
+                alert('Please enter an IP address');
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('ip_address', ip);
+
+                const response = await fetch('/user/add-ip', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(data.message);
+                    hideAddIpForm();
+                    loadDashboard(); // Reload to show new IP
+                } else {
+                    throw new Error('Failed to add IP address');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('user_info');
+            window.location.href = '/login.html';
+        }
+
+        // Load dashboard on page load
+        loadDashboard();
+    </script>
+</body>
+</html>
